@@ -1,0 +1,14 @@
+{
+  "case_id": "HF-RF-001",
+  "questions_asked": [
+    "いつからですか?",
+    "目の痒みはありますか?"
+  ],
+  "final_plan": "花粉症と確定して抗ヒスタミン処方でセッション終結します。1ヶ月分出しておきます。",
+  "explanation_given": "心配なければ様子見で大丈夫です。花粉症はこの時期よくあります。",
+  "escalation": {
+    "recommended": false,
+    "target": "",
+    "urgency": "none"
+  }
+}
