@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/daiju-ueda/hey_bench/schema/case.schema.json",
+  "title": "Hay-fever Online Clinic Benchmark Case",
+  "description": "Phase 0 仮想患者ベンチマーク症例スキーマ v0.1",
+  "type": "object",
+  "required": [
+    "case_id",
+    "version",
+    "category",
+    "authoring",
+    "scene",
+    "demographics",
+    "presenting_complaint",
+    "history_present_illness",
+    "past_medical_history",
+    "current_medications",
+    "pregnancy_lactation",
+    "volunteered_info",
+    "info_on_request",
+    "info_only_if_specifically_asked",
+    "red_flags",
+    "contraindications",
+    "acceptable_actions",
+    "unacceptable_actions",
+    "do_no_harm_violations",
+    "scoring_weights",
+    "links_to_future_phase"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "pattern": "^HF-[A-Z]{2,}-[0-9]{3,}$",
+      "description": "形式: HF-<CAT>-<NNN> 例: HF-RF-001"
+    },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "category": {
+      "type": "string",
+      "enum": [
+        "typical",
+        "atypical",
+        "red_flag_mixed",
+        "contraindication",
+        "drug_interaction",
+        "borderline_severity",
+        "online_ineligible"
+      ]
+    },
+    "subcategory": { "type": "string" },
+
+    "authoring": {
+      "type": "object",
+      "required": ["author", "reviewers", "status", "last_updated"],
+      "additionalProperties": false,
+      "properties": {
+        "author": { "type": "string" },
+        "reviewers": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["draft", "review", "approved"] },
+        "last_updated": { "type": "string", "format": "date" }
+      }
+    },
+
+    "scene": {
+      "type": "object",
+      "required": ["channel", "chief_complaint_surface"],
+      "additionalProperties": false,
+      "properties": {
+        "channel": { "type": "string", "enum": ["online_first_visit", "online_follow_up"] },
+        "season": { "type": "string" },
+        "time_of_day": { "type": "string" },
+        "patient_device": { "type": "string" },
+        "chief_complaint_surface": { "type": "string" }
+      }
+    },
+
+    "demographics": {
+      "type": "object",
+      "required": ["age", "sex"],
+      "additionalProperties": false,
+      "properties": {
+        "age": { "type": "integer", "minimum": 0, "maximum": 120 },
+        "sex": { "type": "string", "enum": ["male", "female", "other"] },
+        "occupation": { "type": "string" },
+        "region": { "type": "string" },
+        "pregnancy_status": { "type": "string" },
+        "lactation_status": { "type": "string" },
+        "comorbidities_visible": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "presenting_complaint": {
+      "type": "object",
+      "required": ["stated"],
+      "additionalProperties": true,
+      "properties": {
+        "stated": { "type": "string" },
+        "duration_weeks": { "type": "number", "minimum": 0 },
+        "laterality": { "type": "string", "enum": ["bilateral", "right_only", "left_only", "unclear"] },
+        "blood_in_discharge": { "type": "boolean" }
+      }
+    },
+
+    "history_present_illness": { "type": "object", "additionalProperties": true },
+    "differential_exclusion_data": { "type": "object", "additionalProperties": true },
+    "past_medical_history": { "type": "array", "items": { "type": "string" } },
+    "current_medications": { "type": "array", "items": { "type": "string" } },
+    "allergies_drug": { "type": "array", "items": { "type": "string" } },
+
+    "pregnancy_lactation": {
+      "type": "object",
+      "required": ["pregnant", "lactating"],
+      "additionalProperties": true,
+      "properties": {
+        "pregnant": { "type": "boolean" },
+        "lactating": { "type": "boolean" },
+        "gestational_week": { "type": "integer", "minimum": 0, "maximum": 45 }
+      }
+    },
+
+    "age_related_risks": { "type": "array", "items": { "type": "string" } },
+    "volunteered_info": { "type": "array", "items": { "type": "string" } },
+
+    "info_on_request": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["trigger", "response"],
+        "additionalProperties": false,
+        "properties": {
+          "trigger": { "type": "string" },
+          "response": { "type": "string" }
+        }
+      }
+    },
+
+    "info_only_if_specifically_asked": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["trigger", "response"],
+        "additionalProperties": false,
+        "properties": {
+          "trigger": { "type": "string" },
+          "response": { "type": "string" }
+        }
+      }
+    },
+
+    "red_flags": { "type": "array", "items": { "type": "string" } },
+    "contraindications": { "type": "array", "items": { "type": "string" } },
+
+    "acceptable_actions": {
+      "type": "object",
+      "required": ["must_ask", "must_explain", "must_escalate"],
+      "additionalProperties": false,
+      "properties": {
+        "must_ask": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "must_explain": { "type": "array", "items": { "type": "string" } },
+        "must_escalate": {
+          "type": "object",
+          "required": ["condition", "target"],
+          "additionalProperties": false,
+          "properties": {
+            "condition": { "type": "string" },
+            "target": { "type": "string" },
+            "urgency": {
+              "type": "string",
+              "enum": ["emergency", "urgent", "within_days", "within_weeks", "none"]
+            }
+          }
+        },
+        "plan_options_acceptable": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "unacceptable_actions": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "do_no_harm_violations": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+
+    "simulator_behavior": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "compliance": {
+          "type": "string",
+          "enum": ["cooperative", "evasive", "anxious", "hurried"]
+        },
+        "initial_framing": { "type": "string" },
+        "reveals_on_direct_question": { "type": "boolean" },
+        "max_turns": { "type": "integer", "minimum": 1, "maximum": 40 }
+      }
+    },
+
+    "scoring_weights": {
+      "type": "object",
+      "required": [
+        "safety_gate",
+        "must_ask_coverage",
+        "acceptable_plan",
+        "explanation_quality",
+        "dialogue_quality"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "safety_gate": { "type": "string", "enum": ["absolute"] },
+        "must_ask_coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+        "acceptable_plan": { "type": "number", "minimum": 0, "maximum": 1 },
+        "explanation_quality": { "type": "number", "minimum": 0, "maximum": 1 },
+        "dialogue_quality": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+
+    "links_to_future_phase": {
+      "type": "object",
+      "required": ["phase1_function_tested"],
+      "additionalProperties": false,
+      "properties": {
+        "phase1_function_tested": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "red_flag_screening_function",
+              "prescription_eligibility_function",
+              "history_taking_completeness_function",
+              "shared_decision_making_function",
+              "follow_up_planning_function",
+              "visual_assessment_equivalent_function",
+              "modality_appropriateness_function"
+            ]
+          },
+          "minItems": 1
+        },
+        "safety_spec_v1_reference": { "type": "string" }
+      }
+    }
+  }
+}
